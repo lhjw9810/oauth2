@@ -46,7 +46,7 @@ func (gt GrantType) String() string {
 	}
 	for _, v := range DefaultExtendGrantType {
 		if v == gt {
-			return v.String()
+			return string(v)
 		}
 	}
 
