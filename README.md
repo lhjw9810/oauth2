@@ -1,6 +1,7 @@
 # Golang OAuth 2.0 Server
 
-> An open protocol to allow secure authorization in a simple and standard method from web, mobile and desktop applications.
+> An open protocol to allow secure authorization in a simple and standard method from web, mobile and desktop
+> applications.
 
 [![Build][build-status-image]][build-status-url] [![Codecov][codecov-image]][codecov-url] [![ReportCard][reportcard-image]][reportcard-url] [![GoDoc][godoc-image]][godoc-url] [![License][license-image]][license-url]
 
@@ -31,7 +32,7 @@
 ### Download and install
 
 ```bash
-go get -u -v github.com/go-oauth2/oauth2/v4/...
+go get -u -v github.com/lhjw9810/oauth2/v4/...
 ```
 
 ### Create file `server.go`
@@ -43,11 +44,11 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/go-oauth2/oauth2/v4/errors"
-	"github.com/go-oauth2/oauth2/v4/manage"
-	"github.com/go-oauth2/oauth2/v4/models"
-	"github.com/go-oauth2/oauth2/v4/server"
-	"github.com/go-oauth2/oauth2/v4/store"
+	"github.com/lhjw9810/oauth2/v4/errors"
+	"github.com/lhjw9810/oauth2/v4/manage"
+	"github.com/lhjw9810/oauth2/v4/models"
+	"github.com/lhjw9810/oauth2/v4/server"
+	"github.com/lhjw9810/oauth2/v4/store"
 )
 
 func main() {
@@ -102,6 +103,7 @@ go build server.go
 ```
 
 ### Open in your web browser
+
 **Authorization Request**:
 [http://localhost:9096/authorize?client_id=000000&response_type=code](http://localhost:9096/authorize?client_id=000000&response_type=code)
 
@@ -138,7 +140,7 @@ Simulation examples of authorization code model, please check [example](/example
 ```go
 
 import (
-	"github.com/go-oauth2/oauth2/v4/generates"
+	"github.com/lhjw9810/oauth2/v4/generates"
 	"github.com/dgrijalva/jwt-go"
 )
 
@@ -186,12 +188,21 @@ if !ok || !token.Valid {
 Copyright (c) 2016 Lyric
 
 [build-status-url]: https://travis-ci.org/go-oauth2/oauth2
+
 [build-status-image]: https://travis-ci.org/go-oauth2/oauth2.svg?branch=master
+
 [codecov-url]: https://codecov.io/gh/go-oauth2/oauth2
+
 [codecov-image]: https://codecov.io/gh/go-oauth2/oauth2/branch/master/graph/badge.svg
-[reportcard-url]: https://goreportcard.com/report/github.com/go-oauth2/oauth2/v4
-[reportcard-image]: https://goreportcard.com/badge/github.com/go-oauth2/oauth2/v4
-[godoc-url]: https://godoc.org/github.com/go-oauth2/oauth2/v4
-[godoc-image]: https://godoc.org/github.com/go-oauth2/oauth2/v4?status.svg
+
+[reportcard-url]: https://goreportcard.com/report/github.com/lhjw9810/oauth2/v4
+
+[reportcard-image]: https://goreportcard.com/badge/github.com/lhjw9810/oauth2/v4
+
+[godoc-url]: https://godoc.org/github.com/lhjw9810/oauth2/v4
+
+[godoc-image]: https://godoc.org/github.com/lhjw9810/oauth2/v4?status.svg
+
 [license-url]: http://opensource.org/licenses/MIT
+
 [license-image]: https://img.shields.io/npm/l/express.svg

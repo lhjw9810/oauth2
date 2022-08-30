@@ -4,10 +4,10 @@ import (
 	"context"
 	"time"
 
-	"github.com/go-oauth2/oauth2/v4"
-	"github.com/go-oauth2/oauth2/v4/errors"
-	"github.com/go-oauth2/oauth2/v4/generates"
-	"github.com/go-oauth2/oauth2/v4/models"
+	"github.com/lhjw9810/oauth2/v4"
+	"github.com/lhjw9810/oauth2/v4/errors"
+	"github.com/lhjw9810/oauth2/v4/generates"
+	"github.com/lhjw9810/oauth2/v4/models"
 )
 
 // NewDefaultManager create to default authorization management instance
@@ -38,6 +38,10 @@ type Manager struct {
 	accessGenerate    oauth2.AccessGenerate
 	tokenStore        oauth2.TokenStore
 	clientStore       oauth2.ClientStore
+}
+
+func (m *Manager) AddGrantTypeConfig(grantType oauth2.GrantType, cfg *Config) {
+	m.gtcfg[grantType] = cfg
 }
 
 // get grant type config
@@ -218,7 +222,7 @@ func (m *Manager) GenerateAuthToken(ctx context.Context, rt oauth2.ResponseType,
 	}
 	return ti, nil
 }
- 
+
 // get authorization code data
 func (m *Manager) getAuthorizationCode(ctx context.Context, code string) (oauth2.TokenInfo, error) {
 	ti, err := m.tokenStore.GetByCode(ctx, code)

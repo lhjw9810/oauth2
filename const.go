@@ -22,6 +22,12 @@ func (rt ResponseType) String() string {
 // GrantType authorization model
 type GrantType string
 
+var DefaultExtendGrantType = make([]GrantType, 0)
+
+func AddExtendGrantType(s GrantType) {
+	DefaultExtendGrantType = append(DefaultExtendGrantType, s)
+}
+
 // define authorization model
 const (
 	AuthorizationCode   GrantType = "authorization_code"
@@ -38,6 +44,12 @@ func (gt GrantType) String() string {
 		gt == Refreshing {
 		return string(gt)
 	}
+	for _, v := range DefaultExtendGrantType {
+		if v == gt {
+			return v.String()
+		}
+	}
+
 	return ""
 }
 

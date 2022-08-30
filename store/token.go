@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/go-oauth2/oauth2/v4"
-	"github.com/go-oauth2/oauth2/v4/models"
 	"github.com/google/uuid"
+	"github.com/lhjw9810/oauth2/v4"
+	"github.com/lhjw9810/oauth2/v4/models"
 	"github.com/tidwall/buntdb"
 )
 

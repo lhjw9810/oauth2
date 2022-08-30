@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-oauth2/oauth2/v4"
-	"github.com/go-oauth2/oauth2/v4/errors"
+	"github.com/lhjw9810/oauth2/v4"
+	"github.com/lhjw9810/oauth2/v4/errors"
 )
 
 // NewDefaultServer create a default authorization server
@@ -21,8 +21,9 @@ func NewDefaultServer(manager oauth2.Manager) *Server {
 // NewServer create authorization server
 func NewServer(cfg *Config, manager oauth2.Manager) *Server {
 	srv := &Server{
-		Config:  cfg,
-		Manager: manager,
+		Config:                         cfg,
+		Manager:                        manager,
+		ExtendGrantTypeValidateHandles: make(map[oauth2.GrantType]ExtendGrantTypeValidate),
 	}
 
 	// default handler
@@ -40,22 +41,33 @@ func NewServer(cfg *Config, manager oauth2.Manager) *Server {
 
 // Server Provide authorization server
 type Server struct {
-	Config                       *Config
-	Manager                      oauth2.Manager
-	ClientInfoHandler            ClientInfoHandler
-	ClientAuthorizedHandler      ClientAuthorizedHandler
-	ClientScopeHandler           ClientScopeHandler
-	UserAuthorizationHandler     UserAuthorizationHandler
-	PasswordAuthorizationHandler PasswordAuthorizationHandler
-	RefreshingValidationHandler  RefreshingValidationHandler
-	PreRedirectErrorHandler      PreRedirectErrorHandler
-	RefreshingScopeHandler       RefreshingScopeHandler
-	ResponseErrorHandler         ResponseErrorHandler
-	InternalErrorHandler         InternalErrorHandler
-	ExtensionFieldsHandler       ExtensionFieldsHandler
-	AccessTokenExpHandler        AccessTokenExpHandler
-	AuthorizeScopeHandler        AuthorizeScopeHandler
-	ResponseTokenHandler         ResponseTokenHandler
+	Config                         *Config
+	Manager                        oauth2.Manager
+	ClientInfoHandler              ClientInfoHandler
+	ClientAuthorizedHandler        ClientAuthorizedHandler
+	ClientScopeHandler             ClientScopeHandler
+	UserAuthorizationHandler       UserAuthorizationHandler
+	PasswordAuthorizationHandler   PasswordAuthorizationHandler
+	RefreshingValidationHandler    RefreshingValidationHandler
+	PreRedirectErrorHandler        PreRedirectErrorHandler
+	RefreshingScopeHandler         RefreshingScopeHandler
+	ResponseErrorHandler           ResponseErrorHandler
+	InternalErrorHandler           InternalErrorHandler
+	ExtensionFieldsHandler         ExtensionFieldsHandler
+	AccessTokenExpHandler          AccessTokenExpHandler
+	AuthorizeScopeHandler          AuthorizeScopeHandler
+	ResponseTokenHandler           ResponseTokenHandler
+	ExtendGrantTypeValidateHandles map[oauth2.GrantType]ExtendGrantTypeValidate
+}
+
+func (s *Server) AddExtendGrantTypeValidateHandle(grantType oauth2.GrantType, fn ExtendGrantTypeValidate) {
+	s.ExtendGrantTypeValidateHandles[grantType] = fn
+}
+
+func (s *Server) RemoveExtendGrantTypeValidateHandle(grantType oauth2.GrantType) {
+	if _, ok := s.ExtendGrantTypeValidateHandles[grantType]; ok {
+		delete(s.ExtendGrantTypeValidateHandles, grantType)
+	}
 }
 
 func (s *Server) handleError(w http.ResponseWriter, req *AuthorizeRequest, err error) error {
@@ -373,6 +385,16 @@ func (s *Server) ValidationTokenRequest(r *http.Request) (oauth2.GrantType, *oau
 			return "", nil, errors.ErrInvalidRequest
 		}
 	}
+
+	if fn, ok := s.ExtendGrantTypeValidateHandles[gt]; ok {
+		userID, err := fn(r)
+		if err != nil {
+			return "", nil, err
+		} else if userID == "" {
+			return "", nil, errors.ErrInvalidGrant
+		}
+	}
+
 	return gt, tgr, nil
 }
 
@@ -469,6 +491,18 @@ func (s *Server) GetAccessToken(ctx context.Context, gt oauth2.GrantType, tgr *o
 			return nil, err
 		}
 		return ti, nil
+	}
+	//自定义grant_type 拿到userid处理逻辑
+	if _, ok := s.ExtendGrantTypeValidateHandles[gt]; ok {
+		if fn := s.ClientScopeHandler; fn != nil {
+			allowed, err := fn(tgr)
+			if err != nil {
+				return nil, err
+			} else if !allowed {
+				return nil, errors.ErrInvalidScope
+			}
+		}
+		return s.Manager.GenerateAccessToken(ctx, gt, tgr)
 	}
 
 	return nil, errors.ErrUnsupportedGrantType

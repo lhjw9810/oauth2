@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/go-oauth2/oauth2/v4"
-	"github.com/go-oauth2/oauth2/v4/errors"
+	"github.com/lhjw9810/oauth2/v4"
+	"github.com/lhjw9810/oauth2/v4/errors"
 )
 
 type (
@@ -51,6 +51,8 @@ type (
 
 	// ResponseTokenHandler response token handing
 	ResponseTokenHandler func(w http.ResponseWriter, data map[string]interface{}, header http.Header, statusCode ...int) error
+
+	ExtendGrantTypeValidate func(r *http.Request) (string, error)
 )
 
 // ClientFormHandler get client data from form
