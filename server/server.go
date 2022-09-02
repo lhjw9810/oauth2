@@ -393,6 +393,7 @@ func (s *Server) ValidationTokenRequest(r *http.Request) (oauth2.GrantType, *oau
 		} else if userID == "" {
 			return "", nil, errors.ErrInvalidGrant
 		}
+		tgr.UserID = userID
 	}
 
 	return gt, tgr, nil
